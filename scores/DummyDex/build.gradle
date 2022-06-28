@@ -1,0 +1,36 @@
+version = '0.0.1'
+
+dependencies {
+    implementation 'com.github.sink772:javaee-tokens:0.6.2'
+    implementation project(':ScoreUtils')
+    implementation project(':Score')
+}
+
+optimizedJar {
+    mainClassName = 'ai.ibriz.dummy.Dex'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    enableDebug = false
+}
+
+deployJar {
+    endpoints {
+        sejong {
+            uri = 'https://sejong.net.solidwallet.io/api/v3'
+            nid = 0x53
+        }
+    }
+    keystore = rootProject.hasProperty('keystoreName') ? "$keystoreName" : ''
+    password = rootProject.hasProperty('keystorePass') ? "$keystorePass" : ''
+    parameters {
+
+    }
+}
+
+test {
+    useJUnitPlatform {
+        excludeTags("integration")
+    }
+}

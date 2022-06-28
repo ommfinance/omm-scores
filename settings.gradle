@@ -1,0 +1,5 @@
+rootProject.name = 'openmoneymarket-dummy-contracts'
+
+include ':DummyDex'
+findProject(':DummyDex')?.projectDir = file('scores/DummyDex')
+

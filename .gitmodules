@@ -1,0 +1,4 @@
+[submodule "openmoneymarket-contracts"]
+	path = openmoneymarket-contracts
+	url = git@github.com:openmoneymarket/openmoneymarket-contracts.git
+	branch = develop
