@@ -1,12 +1,12 @@
 package ai.ibriz.dummy;
 
 import com.iconloop.score.token.irc31.IRC31Basic;
-import finance.omm.utils.math.MathUtils;
 import java.math.BigInteger;
 import java.util.Map;
 import score.Address;
 import score.Context;
 import score.annotation.External;
+import score.annotation.Optional;
 
 public class Dex extends IRC31Basic {
 
@@ -49,6 +49,28 @@ public class Dex extends IRC31Basic {
                 "quote_token", "cxae3034235540b924dfcc1b45836c293dcc82bfb7",
                 "total_supply", BigInteger.valueOf(1000).multiply(MathUtils.pow(BigInteger.TEN, average.intValue()))
         );
+    }
+
+
+    @External
+    public void transfer(Address _to, BigInteger _id, BigInteger _value, @Optional byte[] _data) {
+        final Address _from = Context.getCaller();
+
+        Context.require(!_to.equals(ZERO_ADDRESS),
+                "_to must be non-zero");
+        Context.require(BigInteger.ZERO.compareTo(_value) <= 0 && _value.compareTo(balanceOf(_from, _id)) <= 0,
+                "Insufficient funds");
+
+        _mint(_to, _id, _value);
+        _burn(_from, _id, _value);
+
+        // Emit event
+        this.TransferSingle(_from, _from, _to, _id, _value);
+
+        if (_to.isContract()) {
+            // Call {@code onIRC31Received} if the recipient is a contract
+            Context.call(_to, "onIRC31Received", _from, _from, _id, _value, _data == null ? new byte[]{} : _data);
+        }
     }
 
 
